@@ -21,31 +21,64 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       margin-bottom: 25px;
     }
-    header h1 {
-      margin: 0;
-      font-size: 2em;
+    header h1 { margin:0; }
+    header p { margin:5px 0 0 0; }
+
+    .button-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 25px;
     }
-    header p {
-      margin: 5px 0 0 0;
-      font-size: 1.1em;
+
+    .btn {
+      background-color: #2E8B57;
+      color: white;
+      border: none;
+      padding: 15px 25px;
+      border-radius: 10px;
+      font-size: 1em;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      transition: 0.3s;
     }
+    .btn:hover { background-color: #3CB371; }
+
     .section {
+      display: none; /* hidden by default */
       background-color: white;
       padding: 20px;
       margin-bottom: 20px;
       border-radius: 12px;
       box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      position: relative;
     }
+
     h2 {
       color: #2E8B57;
       margin-top: 0;
       border-bottom: 2px solid #2E8B57;
       padding-bottom: 5px;
     }
-    ul {
-      padding-left: 25px;
-      line-height: 1.6;
+
+    ul { padding-left: 25px; line-height: 1.6; }
+
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background-color: #c0392b;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: 0.3s;
     }
+    .close-btn:hover { background-color: #e74c3c; }
+
     footer {
       text-align: center;
       margin-top: 30px;
@@ -58,17 +91,29 @@
 
   <header>
     <h1>Barangay Info System</h1>
-    <p>Welcome to our barangay information page</p>
+    <p>Click a button to view details</p>
   </header>
 
-  <div class="section">
+  <div class="button-container" id="buttons">
+    <button class="btn" onclick="showSection('office')">Office Hours</button>
+    <button class="btn" onclick="showSection('services')">Services</button>
+    <button class="btn" onclick="showSection('requirements')">Requirements</button>
+    <button class="btn" onclick="showSection('announcements')">Announcements</button>
+    <button class="btn" onclick="showSection('contact')">Contact</button>
+    <button class="btn" onclick="showSection('members')">Members</button>
+  </div>
+
+  <!-- Sections -->
+  <div id="office" class="section">
+    <button class="close-btn" onclick="closeSection()">Close</button>
     <h2>Office Hours</h2>
     <p>Monday - Friday: 7:30 AM - 4:30 PM</p>
     <p>Saturday: 8:00 AM - 12:00 PM</p>
     <p>Sunday: Closed</p>
   </div>
 
-  <div class="section">
+  <div id="services" class="section">
+    <button class="close-btn" onclick="closeSection()">Close</button>
     <h2>Services</h2>
     <ul>
       <li>Barangay Clearance</li>
@@ -78,7 +123,8 @@
     </ul>
   </div>
 
-  <div class="section">
+  <div id="requirements" class="section">
+    <button class="close-btn" onclick="closeSection()">Close</button>
     <h2>Requirements</h2>
     <ul>
       <li>Valid ID</li>
@@ -87,7 +133,8 @@
     </ul>
   </div>
 
-  <div class="section">
+  <div id="announcements" class="section">
+    <button class="close-btn" onclick="closeSection()">Close</button>
     <h2>Announcements</h2>
     <ul>
       <li>Weekly Community Meeting: Every Monday, 3 PM</li>
@@ -96,14 +143,16 @@
     </ul>
   </div>
 
-  <div class="section">
+  <div id="contact" class="section">
+    <button class="close-btn" onclick="closeSection()">Close</button>
     <h2>Contact Information</h2>
     <p>Barangay Hall Phone: 0912-345-6789</p>
     <p>Email: barangayinfo@example.com</p>
     <p>Address: 123 Barangay St., City</p>
   </div>
 
-  <div class="section">
+  <div id="members" class="section">
+    <button class="close-btn" onclick="closeSection()">Close</button>
     <h2>Members</h2>
     <ul>
       <li>Khurt Mendoza</li>
@@ -116,6 +165,24 @@
   <footer>
     &copy; 2026 Barangay Info System
   </footer>
+
+  <script>
+    function showSection(id) {
+      // Hide buttons and show selected section
+      document.getElementById('buttons').style.display = 'none';
+      const sections = document.querySelectorAll('.section');
+      sections.forEach(sec => sec.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+    }
+
+    function closeSection() {
+      // Hide all sections and show buttons
+      const sections = document.querySelectorAll('.section');
+      sections.forEach(sec => sec.style.display = 'none');
+      document.getElementById('buttons').style.display = 'flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
 
 </body>
 </html>
