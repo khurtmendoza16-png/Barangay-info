@@ -19,10 +19,8 @@ header {
   background: linear-gradient(90deg, #2E8B57, #3CB371);
   color: white;
   padding: 20px 30px;
-  border-radius: 0 0 15px 15px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
-header h1 { margin: 0; font-size: 1.8em; }
+header h1 { margin: 0; font-size: 2em; }
 #adminButton {
   background: #fff;
   color: #2E8B57;
@@ -31,7 +29,6 @@ header h1 { margin: 0; font-size: 1.8em; }
   border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
-  transition: 0.3s;
 }
 #adminButton:hover { background: #f1f1f1; }
 
@@ -51,35 +48,29 @@ header h1 { margin: 0; font-size: 1.8em; }
   border-radius: 12px;
   cursor: pointer;
   font-weight: 600;
-  transition: 0.3s;
 }
-.nav-buttons button:hover {
-  background: #3CB371;
-  transform: translateY(-2px);
-}
+.nav-buttons button:hover { background: #3CB371; }
 
-/* Public Sections */
+/* Public Sections: bigger, full-width style */
 .section {
   display: none;
-  background: #ffffff;
-  padding: 25px 20px;
+  width: 90%;
+  max-width: 1000px;
   margin: 20px auto;
-  border-radius: 15px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-  max-width: 700px;
-  position: relative;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  padding: 30px;
+  background: none; /* no card background */
 }
-.section.show { display: block; opacity: 1; transform: translateY(0); }
+.section.show { display: block; }
 .section h2 {
   color: #2E8B57;
   margin-top: 0;
+  font-size: 1.8em;
   border-bottom: 2px solid #2E8B57;
   padding-bottom: 5px;
-  font-size: 1.4em;
 }
-.section ul { padding-left: 20px; }
-.section li { margin-bottom: 5px; }
+.section ul { padding-left: 25px; font-size: 1.1em; }
+.section li { margin-bottom: 8px; line-height: 1.5; }
+.section p { font-size: 1.1em; line-height: 1.6; }
 .close-btn {
   position: absolute;
   top: 15px; right: 15px;
@@ -90,13 +81,12 @@ header h1 { margin: 0; font-size: 1.8em; }
   border-radius: 8px;
   cursor: pointer;
   font-size: .9em;
-  transition: 0.3s;
 }
-.close-btn:hover { background-color: #e74c3c; transform: translateY(-2px); }
+.close-btn:hover { background-color: #e74c3c; }
 
 /* Admin Login */
 .login-box {
-  max-width: 320px;
+  max-width: 350px;
   background: white;
   padding: 25px 20px;
   border-radius: 15px;
@@ -124,7 +114,6 @@ header h1 { margin: 0; font-size: 1.8em; }
   color: white;
   font-size: 1em;
   cursor: pointer;
-  transition: 0.3s;
   margin: 5px;
 }
 .login-box button:hover { background: #3CB371; }
@@ -139,8 +128,7 @@ header h1 { margin: 0; font-size: 1.8em; }
   padding: 20px;
   margin: 20px auto;
   border-radius: 12px;
-  max-width: 700px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  max-width: 800px;
 }
 .admin-section .preview {
   background: white;
@@ -159,7 +147,6 @@ header h1 { margin: 0; font-size: 1.8em; }
 
 /* Footer */
 footer { text-align:center; margin:30px 0; font-size:.9em; color:#555; }
-
 </style>
 </head>
 <body>
@@ -223,39 +210,49 @@ async function loadData(){
     navButtons.appendChild(navBtn);
 
     // Section
-    const sec = document.createElement('div'); sec.id = key; 
+    const sec = document.createElement('div'); 
+    sec.id = key; 
     sec.className = adminMode ? 'admin-section' : 'section';
-    const h2 = document.createElement('h2'); h2.innerText = title; sec.appendChild(h2);
-    const preview = document.createElement('div'); preview.className='preview'; preview.id=key+'-preview'; sec.appendChild(preview);
+    const h2 = document.createElement('h2'); h2.innerText = title; 
+    sec.appendChild(h2);
 
     const content = data[key];
+
+    if(adminMode){
+        const preview = document.createElement('div'); 
+        preview.className='preview'; 
+        preview.id=key+'-preview'; 
+        sec.appendChild(preview);
+    }
+
     if(Array.isArray(content)){
-      content.forEach((item,i)=>{
-        const li=document.createElement('li'); li.innerText=item;
-        if(adminMode){ li.contentEditable=true; li.dataset.arrayKey=key; li.dataset.index=i; li.addEventListener('input',()=>updatePreview(key)); }
-        sec.appendChild(li);
-      });
+        content.forEach((item,i)=>{
+            const li=document.createElement('li'); li.innerText=item;
+            if(adminMode){ li.contentEditable=true; li.dataset.arrayKey=key; li.dataset.index=i; li.addEventListener('input',()=>updatePreview(key)); }
+            sec.appendChild(li);
+        });
     } else if(typeof content==='object'){
-      for(const sub in content){
-        const p=document.createElement('p'); p.innerText=`${sub}: ${content[sub]}`;
-        if(adminMode){ p.contentEditable=true; p.dataset.objKey=key; p.dataset.subKey=sub; p.addEventListener('input',()=>updatePreview(key)); }
-        sec.appendChild(p);
-      }
+        for(const sub in content){
+            const p=document.createElement('p'); p.innerText=`${sub}: ${content[sub]}`;
+            if(adminMode){ p.contentEditable=true; p.dataset.objKey=key; p.dataset.subKey=sub; p.addEventListener('input',()=>updatePreview(key)); }
+            sec.appendChild(p);
+        }
     } else {
-      const p=document.createElement('p'); p.innerText = content;
-      if(adminMode){ p.contentEditable=true; p.dataset.key=key; p.addEventListener('input',()=>updatePreview(key)); }
-      sec.appendChild(p);
+        const p=document.createElement('p'); p.innerText = content;
+        if(adminMode){ p.contentEditable=true; p.dataset.key=key; p.addEventListener('input',()=>updatePreview(key)); }
+        sec.appendChild(p);
     }
 
     if(adminMode){
-      const saveBtn = document.createElement('button'); saveBtn.className='save-btn'; saveBtn.innerText='Download JSON';
-      saveBtn.onclick=saveData; sec.appendChild(saveBtn);
-      const closeBtn = document.createElement('button'); closeBtn.className='close-btn'; closeBtn.innerText='Close';
-      closeBtn.onclick=closeSection; sec.appendChild(closeBtn);
+        const saveBtn = document.createElement('button'); saveBtn.className='save-btn'; saveBtn.innerText='Download JSON';
+        saveBtn.onclick=saveData; sec.appendChild(saveBtn);
+        const closeBtn = document.createElement('button'); closeBtn.className='close-btn'; closeBtn.innerText='Close';
+        closeBtn.onclick=closeSection; sec.appendChild(closeBtn);
     }
 
     sectionsContainer.appendChild(sec);
   }
+
   if(!adminMode) document.querySelectorAll('.section').forEach(sec=>sec.style.display='none');
 }
 
@@ -264,6 +261,7 @@ function showSection(id){
   const sec = document.getElementById(id);
   sec.classList.add('show');
 }
+
 function closeSection(){ document.querySelectorAll('.section, .admin-section').forEach(sec=>sec.style.display='none'); }
 
 function updatePreview(id){
@@ -303,7 +301,6 @@ function checkPassword(){
   }
 }
 
-// Load public data by default
 loadData();
 </script>
 </body>
