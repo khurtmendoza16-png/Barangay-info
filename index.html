@@ -3,41 +3,43 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Barangay Info - Admin</title>
+<title>Barangay Info</title>
 <style>
 body { font-family:'Segoe UI', Arial; background:#f0f4f9; margin:0; padding:0 20px; color:#333;}
 header { text-align:center; background:linear-gradient(90deg,#2E8B57,#3CB371); color:white; padding:30px 20px; border-radius:0 0 15px 15px; box-shadow:0 4px 10px rgba(0,0,0,0.15);}
 header h1{margin:0;font-size:2em;} header p{margin:5px 0 0 0;font-size:1em;}
-.login-box { max-width:350px; margin:40px auto; background:white; padding:25px 20px; border-radius:15px; box-shadow:0 5px 15px rgba(0,0,0,0.2); text-align:center;}
-.login-box input[type="password"], .login-box input[type="text"] { padding:10px; width:90%; border-radius:8px; border:1px solid #ccc; margin-bottom:15px; font-size:1em;}
-.login-box button { padding:10px 25px; border:none; border-radius:10px; background:#2E8B57; color:white; font-size:1em; cursor:pointer; transition:0.3s;}
-.login-box button:hover{background:#3CB371;}
-.show-password{margin-bottom:15px; cursor:pointer; font-size:0.9em; color:#555;}
-#error{color:red; font-size:0.9em; margin-top:10px; min-height:18px;}
-.button-container{display:flex;flex-wrap:wrap;justify-content:center;gap:15px;margin:25px 0; display:none;}
-.btn{background-color:#2E8B57;color:white;border:none;padding:15px 25px;border-radius:12px;font-size:1em;cursor:pointer;box-shadow:0 3px 6px rgba(0,0,0,0.2);transition:0.3s;}
-.btn:hover{background-color:#3CB371; transform:translateY(-2px);}
-.section{display:none;background:white;padding:25px 20px;margin-bottom:25px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,0.1);position:relative;animation:fadeIn 0.3s ease;}
+.button-container, .section, #adminPanel { display:none; }
+.section{background:white;padding:25px 20px;margin-bottom:25px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,0.1);}
 h2{color:#2E8B57;margin-top:0;border-bottom:2px solid #2E8B57;padding-bottom:5px;}
-[contenteditable="true"]{background:#f9f9f9;padding:6px 8px;border-radius:6px;min-height:18px;margin:5px 0;outline:1px dashed #2E8B57;}
+[contenteditable="true"]{background:#f0fff5;padding:6px 8px;border-radius:6px;min-height:18px;margin:5px 0;outline:1px dashed #2E8B57;}
 .close-btn{position:absolute;top:15px;right:15px;background-color:#c0392b;color:white;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:.9em;transition:0.3s;}
 .close-btn:hover{background-color:#e74c3c;transform:translateY(-2px);}
 .save-btn{background:#2980b9;color:white;border:none;padding:12px 20px;border-radius:10px;cursor:pointer;font-size:1em;margin-top:15px;box-shadow:0 3px 8px rgba(0,0,0,0.2);transition:0.3s;}
 .save-btn:hover{background:#3498db;transform:translateY(-2px);}
 .preview{background:#f0fff5;border:1px solid #2E8B57;border-radius:10px;padding:10px;margin-top:10px;min-height:20px;}
-footer{text-align:center;margin:30px 0;font-size:.9em;color:#555;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.login-box { max-width:350px; margin:20px auto; background:white; padding:25px 20px; border-radius:15px; box-shadow:0 5px 15px rgba(0,0,0,0.2); text-align:center;}
+.login-box input[type="password"], .login-box input[type="text"] { padding:10px; width:90%; border-radius:8px; border:1px solid #ccc; margin-bottom:15px; font-size:1em;}
+.login-box button { padding:10px 25px; border:none; border-radius:10px; background:#2E8B57; color:white; font-size:1em; cursor:pointer; transition:0.3s;}
+.login-box button:hover{background:#3CB371;}
+.show-password{margin-bottom:15px; cursor:pointer; font-size:0.9em; color:#555;}
+#error{color:red; font-size:0.9em; margin-top:10px; min-height:18px;}
+#adminButton{margin:20px auto; display:block; padding:10px 25px; border:none; border-radius:10px; background:#2E8B57; color:white; font-size:1em; cursor:pointer;}
+#adminButton:hover{background:#3CB371;}
 </style>
 </head>
 <body>
 
 <header>
-<h1>Barangay Info Admin Panel</h1>
-<p>Login to edit content with live preview</p>
+<h1>Barangay Info System</h1>
+<p>Welcome to our barangay information page</p>
 </header>
 
+<!-- Public Info -->
+<div id="publicContent"></div>
+
+<!-- Admin Login Modal -->
 <div class="login-box" id="loginBox">
-  <input type="password" id="password" placeholder="Enter password">
+  <input type="password" id="password" placeholder="Enter admin password">
   <div>
     <input type="checkbox" id="showPass"> <label for="showPass" class="show-password">Show Password</label>
   </div>
@@ -45,17 +47,32 @@ footer{text-align:center;margin:30px 0;font-size:.9em;color:#555;}
   <p id="error"></p>
 </div>
 
-<div class="button-container" id="buttons"></div>
-<div id="sections-container"></div>
+<!-- Admin Panel -->
+<div id="adminPanel">
+  <div class="button-container" id="buttons"></div>
+  <div id="sections-container"></div>
+</div>
 
-<footer>&copy; 2026 Barangay Info System - Admin</footer>
+<!-- Admin login trigger -->
+<button id="adminButton" onclick="showLogin()">Admin Login</button>
+
+<footer>&copy; 2026 Barangay Info System</footer>
 
 <script>
+const adminButton = document.getElementById('adminButton');
+const loginBox = document.getElementById('loginBox');
 const passwordInput = document.getElementById('password');
 const errorMsg = document.getElementById('error');
-const loginBox = document.getElementById('loginBox');
+const adminPanel = document.getElementById('adminPanel');
+const publicContent = document.getElementById('publicContent');
 
-// Show/hide password
+// Show login
+function showLogin(){
+  adminButton.style.display='none';
+  loginBox.style.display='block';
+}
+
+// Toggle password visibility
 document.getElementById('showPass').addEventListener('change', function(){
   passwordInput.type = this.checked ? 'text' : 'password';
 });
@@ -64,9 +81,8 @@ document.getElementById('showPass').addEventListener('change', function(){
 function checkPassword(){
   const pass = passwordInput.value.trim();
   if(pass === "barangay123"){
-    loginBox.style.display='none';       // hide login
-    document.getElementById('buttons').style.display='flex'; // show admin
-    loadData();                           // load JSON
+    loginBox.style.display='none';
+    loadData(true); // admin mode
   } else {
     errorMsg.innerText = "Incorrect password. Please try again.";
     passwordInput.value = "";
@@ -75,70 +91,85 @@ function checkPassword(){
 }
 
 // Clear error on typing
-passwordInput.addEventListener('input', function(){
-  if(errorMsg.innerText !== "") errorMsg.innerText="";
-});
+passwordInput.addEventListener('input', ()=>{ if(errorMsg.innerText) errorMsg.innerText=''; });
 
+// Load JSON data (adminMode = true allows editing)
 let globalData={};
-
-// Load JSON data and create sections/buttons
-async function loadData(){
+async function loadData(adminMode=false){
   const response = await fetch('data.json');
   const data = await response.json();
   globalData = data;
 
-  const buttonsDiv = document.getElementById('buttons');
-  const sectionsDiv = document.getElementById('sections-container');
-  buttonsDiv.innerHTML=''; sectionsDiv.innerHTML='';
+  if(!adminMode){
+    // Public view
+    let html='';
+    for(const key in data){
+      html+=`<div class="section"><h2>${key.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase())}</h2>`;
+      const content = data[key];
+      if(Array.isArray(content)){
+        html+='<ul>'; content.forEach(i=>{ html+=`<li>${i}</li>`}); html+='</ul>';
+      } else if(typeof content==='object'){
+        html+='<ul>'; for(const sub in content){ html+=`<li>${sub}: ${content[sub]}</li>` } html+='</ul>';
+      } else html+=`<p>${content}</p>`;
+      html+='</div>';
+    }
+    publicContent.innerHTML = html;
+  } else {
+    // Admin mode
+    adminPanel.style.display='block';
+    document.getElementById('buttons').style.display='flex';
+    const buttonsDiv = document.getElementById('buttons');
+    const sectionsDiv = document.getElementById('sections-container');
+    buttonsDiv.innerHTML=''; sectionsDiv.innerHTML='';
 
-  for(const key in data){
-    let title = key.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase());
+    for(const key in data){
+      let title = key.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase());
 
-    // Button
-    const btn=document.createElement('button');
-    btn.className='btn'; btn.innerText=title;
-    btn.onclick=()=>showSection(key);
-    buttonsDiv.appendChild(btn);
+      // Button
+      const btn=document.createElement('button');
+      btn.className='btn'; btn.innerText=title;
+      btn.onclick=()=>showSection(key);
+      buttonsDiv.appendChild(btn);
 
-    // Section
-    const sec=document.createElement('div'); sec.id=key; sec.className='section';
-    const closeBtn=document.createElement('button'); closeBtn.className='close-btn';
-    closeBtn.innerText='Close'; closeBtn.onclick=closeSection; sec.appendChild(closeBtn);
+      // Section
+      const sec=document.createElement('div'); sec.id=key; sec.className='section';
+      const closeBtn=document.createElement('button'); closeBtn.className='close-btn';
+      closeBtn.innerText='Close'; closeBtn.onclick=closeSection; sec.appendChild(closeBtn);
 
-    const h2=document.createElement('h2'); h2.innerText=title; sec.appendChild(h2);
+      const h2=document.createElement('h2'); h2.innerText=title; sec.appendChild(h2);
+      const preview=document.createElement('div'); preview.className='preview'; preview.id=key+'-preview'; sec.appendChild(preview);
 
-    const preview=document.createElement('div'); preview.className='preview'; preview.id=key+'-preview';
-    sec.appendChild(preview);
-
-    const content=data[key];
-    if(Array.isArray(content)){
-      content.forEach((item,i)=>{
-        const li=document.createElement('li'); li.contentEditable=true; li.innerText=item;
-        li.dataset.arrayKey=key; li.dataset.index=i; sec.appendChild(li);
-        li.addEventListener('input',()=>updatePreview(key));
-      });
-    } else if(typeof content==='object'){
-      for(const sub in content){
-        const p=document.createElement('p'); p.contentEditable=true;
-        p.innerText=`${sub.charAt(0).toUpperCase()+sub.slice(1)}: ${content[sub]}`;
-        p.dataset.objKey=key; p.dataset.subKey=sub; sec.appendChild(p);
+      const content=data[key];
+      if(Array.isArray(content)){
+        content.forEach((item,i)=>{
+          const li=document.createElement('li'); li.contentEditable=true; li.innerText=item;
+          li.dataset.arrayKey=key; li.dataset.index=i; sec.appendChild(li);
+          li.addEventListener('input',()=>updatePreview(key));
+        });
+      } else if(typeof content==='object'){
+        for(const sub in content){
+          const p=document.createElement('p'); p.contentEditable=true;
+          p.innerText=`${sub.charAt(0).toUpperCase()+sub.slice(1)}: ${content[sub]}`;
+          p.dataset.objKey=key; p.dataset.subKey=sub; sec.appendChild(p);
+          p.addEventListener('input',()=>updatePreview(key));
+        }
+      } else {
+        const p=document.createElement('p'); p.contentEditable=true; p.innerText=content;
+        p.dataset.key=key; sec.appendChild(p);
         p.addEventListener('input',()=>updatePreview(key));
       }
-    } else {
-      const p=document.createElement('p'); p.contentEditable=true; p.innerText=content;
-      p.dataset.key=key; sec.appendChild(p);
-      p.addEventListener('input',()=>updatePreview(key));
+
+      // Save button
+      const saveBtn=document.createElement('button'); saveBtn.className='save-btn'; saveBtn.innerText='Download Updated JSON';
+      saveBtn.onclick=saveData; sec.appendChild(saveBtn);
+
+      sectionsDiv.appendChild(sec);
+      updatePreview(key);
     }
-
-    // Save button
-    const saveBtn=document.createElement('button'); saveBtn.className='save-btn'; saveBtn.innerText='Download Updated JSON';
-    saveBtn.onclick=saveData; sec.appendChild(saveBtn);
-
-    sectionsDiv.appendChild(sec);
-    updatePreview(key);
   }
 }
 
+// Admin live preview & functions
 function updatePreview(id){
   const preview=document.getElementById(id+'-preview');
   let text='';
@@ -147,20 +178,17 @@ function updatePreview(id){
   });
   preview.innerText=text.trim();
 }
-
 function showSection(id){
   document.getElementById('buttons').style.display='none';
   document.querySelectorAll('.section').forEach(sec=>sec.style.display='none');
   document.getElementById(id).style.display='block';
   updatePreview(id);
 }
-
 function closeSection(){
   document.querySelectorAll('.section').forEach(sec=>sec.style.display='none');
   document.getElementById('buttons').style.display='flex';
   window.scrollTo({top:0,behavior:'smooth'});
 }
-
 function saveData(){
   document.querySelectorAll('[contenteditable="true"]').forEach(el=>{
     if(el.dataset.arrayKey) globalData[el.dataset.arrayKey][el.dataset.index]=el.innerText;
@@ -175,6 +203,9 @@ function saveData(){
   const a=document.createElement('a'); a.href=url; a.download='data.json'; a.click();
   URL.revokeObjectURL(url);
 }
+
+// Load public content on page load
+loadData();
 </script>
 
 </body>
