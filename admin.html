@@ -5,13 +5,58 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Login</title>
 <style>
-body { font-family: 'Segoe UI', Arial, sans-serif; background:#f0f4f9; display:flex; justify-content:center; align-items:center; height:100vh; margin:0;}
-.login-box { background:white; padding:30px 25px; border-radius:15px; box-shadow:0 5px 15px rgba(0,0,0,0.2); text-align:center; }
-.login-box h2 { margin-bottom:20px; color:#2E8B57; }
-input[type="password"], input[type="text"] { padding:10px; width:80%; border-radius:8px; border:1px solid #ccc; margin-bottom:15px; font-size:1em; }
-button { padding:10px 25px; border:none; border-radius:10px; background:#2E8B57; color:white; font-size:1em; cursor:pointer; transition:0.3s; }
-button:hover { background:#3CB371; }
-.show-password { margin-bottom:15px; cursor:pointer; font-size:0.9em; color:#555; }
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f0f4f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+.login-box {
+  background: white;
+  padding: 30px 25px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  text-align: center;
+  width: 300px;
+}
+.login-box h2 {
+  margin-bottom: 20px;
+  color: #2E8B57;
+}
+input[type="password"], input[type="text"] {
+  padding: 10px;
+  width: 90%;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 15px;
+  font-size: 1em;
+}
+button {
+  padding: 10px 25px;
+  border: none;
+  border-radius: 10px;
+  background: #2E8B57;
+  color: white;
+  font-size: 1em;
+  cursor: pointer;
+  transition: 0.3s;
+}
+button:hover { background: #3CB371; }
+.show-password {
+  margin-bottom: 15px;
+  cursor: pointer;
+  font-size: 0.9em;
+  color: #555;
+}
+#error {
+  color: red;
+  font-size: 0.9em;
+  margin-top: 10px;
+  min-height: 18px;
+}
 </style>
 </head>
 <body>
@@ -23,23 +68,34 @@ button:hover { background:#3CB371; }
     <input type="checkbox" id="showPass"> <label for="showPass" class="show-password">Show Password</label>
   </div>
   <button onclick="checkPassword()">Login</button>
-  <p id="error" style="color:red;margin-top:10px;"></p>
+  <p id="error"></p>
 </div>
 
 <script>
+const passwordInput = document.getElementById('password');
+const errorMsg = document.getElementById('error');
+
+// Show/hide password
 document.getElementById('showPass').addEventListener('change', function(){
-  const passInput = document.getElementById('password');
-  passInput.type = this.checked ? 'text' : 'password';
+  passwordInput.type = this.checked ? 'text' : 'password';
 });
 
+// Check password
 function checkPassword(){
-  const pass = document.getElementById('password').value;
+  const pass = passwordInput.value.trim();
   if(pass === "barangay123"){
     window.location.href = "admin.html"; // go to admin page
   } else {
-    document.getElementById('error').innerText = "Wrong password! Try again.";
+    errorMsg.innerText = "Incorrect password. Please try again.";
+    passwordInput.value = "";
+    passwordInput.focus();
   }
 }
+
+// Clear error when typing again
+passwordInput.addEventListener('input', function(){
+  if(errorMsg.innerText !== "") errorMsg.innerText = "";
+});
 </script>
 
 </body>
