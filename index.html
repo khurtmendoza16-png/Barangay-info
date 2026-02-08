@@ -29,10 +29,11 @@ header h1 { margin: 0; font-size: 2em; }
   border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
+  transition: 0.3s;
 }
 #adminButton:hover { background: #f1f1f1; }
 
-/* Public Navigation Buttons */
+/* Navigation buttons */
 .nav-buttons {
   display: flex;
   gap: 10px;
@@ -48,19 +49,32 @@ header h1 { margin: 0; font-size: 2em; }
   border-radius: 12px;
   cursor: pointer;
   font-weight: 600;
+  transition: 0.3s;
 }
-.nav-buttons button:hover { background: #3CB371; }
+.nav-buttons button:hover {
+  background: #3CB371;
+  transform: translateY(-2px);
+}
 
-/* Public Sections: bigger, full-width style */
+/* Public sections */
 .section {
   display: none;
   width: 90%;
   max-width: 1000px;
   margin: 20px auto;
   padding: 30px;
-  background: none; /* no card background */
+  background: linear-gradient(120deg, #ffffff, #f0fff5);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
-.section.show { display: block; }
+.section.show {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
 .section h2 {
   color: #2E8B57;
   margin-top: 0;
@@ -81,6 +95,7 @@ header h1 { margin: 0; font-size: 2em; }
   border-radius: 8px;
   cursor: pointer;
   font-size: .9em;
+  transition: 0.3s;
 }
 .close-btn:hover { background-color: #e74c3c; }
 
@@ -120,7 +135,7 @@ header h1 { margin: 0; font-size: 2em; }
 .show-password { margin-bottom: 15px; cursor: pointer; font-size: 0.9em; color: #555; }
 #error { color: red; font-size: 0.9em; margin-top: 10px; min-height: 18px; }
 
-/* Admin Section */
+/* Admin sections */
 .admin-section {
   display: flex;
   flex-direction: column;
@@ -147,6 +162,7 @@ header h1 { margin: 0; font-size: 2em; }
 
 /* Footer */
 footer { text-align:center; margin:30px 0; font-size:.9em; color:#555; }
+
 </style>
 </head>
 <body>
@@ -239,7 +255,7 @@ async function loadData(){
         }
     } else {
         const p=document.createElement('p'); p.innerText = content;
-        if(adminMode){ p.contentEditable=true; p.dataset.key=key; p.addEventListener('input',()=>updatePreview(key)); }
+        if(adminMode){ p.dataset.key=key; p.contentEditable=true; p.addEventListener('input',()=>updatePreview(key)); }
         sec.appendChild(p);
     }
 
@@ -293,7 +309,7 @@ function checkPassword(){
   if(pass === "barangay123"){
     loginBox.style.display='none';
     adminMode = true;
-    loadData(); // reload page in admin mode
+    loadData();
   } else {
     errorMsg.innerText = "Incorrect password. Please try again.";
     passwordInput.value = "";
