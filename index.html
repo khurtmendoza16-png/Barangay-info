@@ -1,188 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Barangay Info</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f4f7;
-      margin: 0;
-      padding: 20px;
-      color: #333;
-    }
-    header {
-      text-align: center;
-      padding: 25px;
-      background: linear-gradient(90deg, #2E8B57, #3CB371);
-      color: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      margin-bottom: 25px;
-    }
-    header h1 { margin:0; }
-    header p { margin:5px 0 0 0; }
-
-    .button-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 15px;
-      margin-bottom: 25px;
-    }
-
-    .btn {
-      background-color: #2E8B57;
-      color: white;
-      border: none;
-      padding: 15px 25px;
-      border-radius: 10px;
-      font-size: 1em;
-      cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      transition: 0.3s;
-    }
-    .btn:hover { background-color: #3CB371; }
-
-    .section {
-      display: none; /* hidden by default */
-      background-color: white;
-      padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 12px;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-      position: relative;
-    }
-
-    h2 {
-      color: #2E8B57;
-      margin-top: 0;
-      border-bottom: 2px solid #2E8B57;
-      padding-bottom: 5px;
-    }
-
-    ul { padding-left: 25px; line-height: 1.6; }
-
-    .close-btn {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      background-color: #c0392b;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.9em;
-      transition: 0.3s;
-    }
-    .close-btn:hover { background-color: #e74c3c; }
-
-    footer {
-      text-align: center;
-      margin-top: 30px;
-      font-size: 0.9em;
-      color: #555;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barangay Info</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#f0f4f7; margin:0; padding:20px; color:#333; }
+  header { text-align:center; padding:25px; background:linear-gradient(90deg,#2E8B57,#3CB371); color:white; border-radius:12px; box-shadow:0 4px 8px rgba(0,0,0,0.1); margin-bottom:25px;}
+  header h1 { margin:0; } header p { margin:5px 0 0 0; }
+  .button-container { display:flex; flex-wrap:wrap; justify-content:center; gap:15px; margin-bottom:25px; }
+  .btn { background-color:#2E8B57; color:white; border:none; padding:15px 25px; border-radius:10px; font-size:1em; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.2); transition:.3s; }
+  .btn:hover { background-color:#3CB371; }
+  .section { display:none; background:white; padding:20px; margin-bottom:20px; border-radius:12px; box-shadow:0 3px 6px rgba(0,0,0,0.1); position:relative;}
+  h2 { color:#2E8B57; margin-top:0; border-bottom:2px solid #2E8B57; padding-bottom:5px; }
+  ul { padding-left:25px; line-height:1.6; }
+  .close-btn { position:absolute; top:15px; right:15px; background-color:#c0392b; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-size:.9em; transition:.3s; }
+  .close-btn:hover { background-color:#e74c3c; }
+  footer { text-align:center; margin-top:30px; font-size:.9em; color:#555; }
+</style>
 </head>
 <body>
 
-  <header>
-    <h1>Barangay Info System</h1>
-    <p>Click a button to view details</p>
-  </header>
+<header>
+  <h1>Barangay Info System</h1>
+  <p>Click a button to view details</p>
+</header>
 
-  <div class="button-container" id="buttons">
-    <button class="btn" onclick="showSection('office')">Office Hours</button>
-    <button class="btn" onclick="showSection('services')">Services</button>
-    <button class="btn" onclick="showSection('requirements')">Requirements</button>
-    <button class="btn" onclick="showSection('announcements')">Announcements</button>
-    <button class="btn" onclick="showSection('contact')">Contact</button>
-    <button class="btn" onclick="showSection('members')">Members</button>
-  </div>
+<div class="button-container" id="buttons"></div>
+<div id="sections-container"></div>
 
-  <!-- Sections -->
-  <div id="office" class="section">
-    <button class="close-btn" onclick="closeSection()">Close</button>
-    <h2>Office Hours</h2>
-    <p>Monday - Friday: 7:30 AM - 4:30 PM</p>
-    <p>Saturday: 8:00 AM - 12:00 PM</p>
-    <p>Sunday: Closed</p>
-  </div>
+<footer>&copy; 2026 Barangay Info System</footer>
 
-  <div id="services" class="section">
-    <button class="close-btn" onclick="closeSection()">Close</button>
-    <h2>Services</h2>
-    <ul>
-      <li>Barangay Clearance</li>
-      <li>Certificate of Residency</li>
-      <li>Business Permit Assistance</li>
-      <li>Other Local Services</li>
-    </ul>
-  </div>
+<script>
+async function loadData() {
+  const response = await fetch('data.json'); // Load JSON
+  const data = await response.json();
 
-  <div id="requirements" class="section">
-    <button class="close-btn" onclick="closeSection()">Close</button>
-    <h2>Requirements</h2>
-    <ul>
-      <li>Valid ID</li>
-      <li>Barangay Clearance Form</li>
-      <li>Proof of Residency</li>
-    </ul>
-  </div>
+  const buttonsDiv = document.getElementById('buttons');
+  const sectionsDiv = document.getElementById('sections-container');
 
-  <div id="announcements" class="section">
-    <button class="close-btn" onclick="closeSection()">Close</button>
-    <h2>Announcements</h2>
-    <ul>
-      <li>Weekly Community Meeting: Every Monday, 3 PM</li>
-      <li>Barangay Health Check: February 15</li>
-      <li>Flood Preparedness Drill: February 20</li>
-    </ul>
-  </div>
+  // Clear containers
+  buttonsDiv.innerHTML = '';
+  sectionsDiv.innerHTML = '';
 
-  <div id="contact" class="section">
-    <button class="close-btn" onclick="closeSection()">Close</button>
-    <h2>Contact Information</h2>
-    <p>Barangay Hall Phone: 0912-345-6789</p>
-    <p>Email: barangayinfo@example.com</p>
-    <p>Address: 123 Barangay St., City</p>
-  </div>
+  // For each section in JSON
+  for (const key in data) {
+    let title = key.replace(/_/g,' ').replace(/\b\w/g,l => l.toUpperCase()); // e.g. office_hours → Office Hours
+    // Create button
+    const btn = document.createElement('button');
+    btn.className = 'btn';
+    btn.innerText = title;
+    btn.onclick = () => showSection(key);
+    buttonsDiv.appendChild(btn);
 
-  <div id="members" class="section">
-    <button class="close-btn" onclick="closeSection()">Close</button>
-    <h2>Members</h2>
-    <ul>
-      <li>Khurt Mendoza</li>
-      <li>Lhea Adriano</li>
-      <li>JM Roxas</li>
-      <li>John Paul</li>
-    </ul>
-  </div>
+    // Create section
+    const sec = document.createElement('div');
+    sec.id = key;
+    sec.className = 'section';
 
-  <footer>
-    &copy; 2026 Barangay Info System
-  </footer>
+    // Close button
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'close-btn';
+    closeBtn.innerText = 'Close';
+    closeBtn.onclick = closeSection;
+    sec.appendChild(closeBtn);
 
-  <script>
-    function showSection(id) {
-      // Hide buttons and show selected section
-      document.getElementById('buttons').style.display = 'none';
-      const sections = document.querySelectorAll('.section');
-      sections.forEach(sec => sec.style.display = 'none');
-      document.getElementById(id).style.display = 'block';
+    // Section content
+    const h2 = document.createElement('h2');
+    h2.innerText = title;
+    sec.appendChild(h2);
+
+    // Add content
+    const content = data[key];
+    if(Array.isArray(content)) {
+      const ul = document.createElement('ul');
+      content.forEach(item => {
+        const li = document.createElement('li');
+        li.innerText = item;
+        ul.appendChild(li);
+      });
+      sec.appendChild(ul);
+    } else if(typeof content === 'object') {
+      for(const sub in content){
+        const p = document.createElement('p');
+        p.innerText = `${sub.charAt(0).toUpperCase() + sub.slice(1)}: ${content[sub]}`;
+        sec.appendChild(p);
+      }
+    } else {
+      const p = document.createElement('p');
+      p.innerText = content;
+      sec.appendChild(p);
     }
 
-    function closeSection() {
-      // Hide all sections and show buttons
-      const sections = document.querySelectorAll('.section');
-      sections.forEach(sec => sec.style.display = 'none');
-      document.getElementById('buttons').style.display = 'flex';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  </script>
+    sectionsDiv.appendChild(sec);
+  }
+}
+
+function showSection(id){
+  document.getElementById('buttons').style.display = 'none';
+  document.querySelectorAll('.section').forEach(sec => sec.style.display='none');
+  document.getElementById(id).style.display = 'block';
+}
+
+function closeSection(){
+  document.querySelectorAll('.section').forEach(sec => sec.style.display='none');
+  document.getElementById('buttons').style.display = 'flex';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+loadData();
+</script>
 
 </body>
 </html>
