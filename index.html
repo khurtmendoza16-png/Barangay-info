@@ -69,6 +69,7 @@ header h1 { margin: 0; font-size: 2em; }
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.5s ease, transform 0.5s ease;
+  position: relative;
 }
 .section.show {
   display: block;
@@ -241,21 +242,39 @@ async function loadData(){
         sec.appendChild(preview);
     }
 
+    // PUBLIC & ADMIN rendering
     if(Array.isArray(content)){
+        const ul = document.createElement('ul');
         content.forEach((item,i)=>{
-            const li=document.createElement('li'); li.innerText=item;
-            if(adminMode){ li.contentEditable=true; li.dataset.arrayKey=key; li.dataset.index=i; li.addEventListener('input',()=>updatePreview(key)); }
-            sec.appendChild(li);
+            const li=document.createElement('li'); 
+            li.innerText=item;
+            if(adminMode){ 
+                li.contentEditable=true; 
+                li.dataset.arrayKey=key; 
+                li.dataset.index=i; 
+                li.addEventListener('input',()=>updatePreview(key)); 
+            }
+            ul.appendChild(li);
         });
+        sec.appendChild(ul);
     } else if(typeof content==='object'){
         for(const sub in content){
             const p=document.createElement('p'); p.innerText=`${sub}: ${content[sub]}`;
-            if(adminMode){ p.contentEditable=true; p.dataset.objKey=key; p.dataset.subKey=sub; p.addEventListener('input',()=>updatePreview(key)); }
+            if(adminMode){ 
+                p.contentEditable=true; 
+                p.dataset.objKey=key; 
+                p.dataset.subKey=sub; 
+                p.addEventListener('input',()=>updatePreview(key)); 
+            }
             sec.appendChild(p);
         }
     } else {
         const p=document.createElement('p'); p.innerText = content;
-        if(adminMode){ p.dataset.key=key; p.contentEditable=true; p.addEventListener('input',()=>updatePreview(key)); }
+        if(adminMode){ 
+            p.dataset.key=key; 
+            p.contentEditable=true; 
+            p.addEventListener('input',()=>updatePreview(key)); 
+        }
         sec.appendChild(p);
     }
 
