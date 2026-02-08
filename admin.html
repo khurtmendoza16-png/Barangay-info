@@ -1,40 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
-    <script>
-        function verifyPassword() {
-            const password = document.getElementById('password').value;
-            // Replace 'your_password' with the desired password
-            if (password === 'your_password') {
-                document.getElementById('adminPanel').style.display = 'block';
-                document.getElementById('loginForm').style.display = 'none';
-            } else {
-                alert('Incorrect password!');
-            }
-        }
-
-        function saveData() {
-            const data = document.getElementById('dataInput').value;
-            // Here you would add functionality to save the data to data.json
-            console.log(data); // Replace this with actual saving mechanism
-            alert('Data saved!');
-        }
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login</title>
+<style>
+body { font-family: 'Segoe UI', Arial, sans-serif; background:#f0f4f9; display:flex; justify-content:center; align-items:center; height:100vh; margin:0;}
+.login-box { background:white; padding:30px 25px; border-radius:15px; box-shadow:0 5px 15px rgba(0,0,0,0.2); text-align:center; }
+.login-box h2 { margin-bottom:20px; color:#2E8B57; }
+input[type="password"], input[type="text"] { padding:10px; width:80%; border-radius:8px; border:1px solid #ccc; margin-bottom:15px; font-size:1em; }
+button { padding:10px 25px; border:none; border-radius:10px; background:#2E8B57; color:white; font-size:1em; cursor:pointer; transition:0.3s; }
+button:hover { background:#3CB371; }
+.show-password { margin-bottom:15px; cursor:pointer; font-size:0.9em; color:#555; }
+</style>
 </head>
 <body>
-    <h1>Admin Panel</h1>
-    <div id="loginForm">
-        <label for="password">Password:</label>
-        <input type="password" id="password">
-        <button onclick="verifyPassword()">Login</button>
-    </div>
-    <div id="adminPanel" style="display:none;">
-        <h2>Edit Data</h2>
-        <textarea id="dataInput" rows="10" cols="30"></textarea><br>
-        <button onclick="saveData()">Save</button>
-    </div>
+
+<div class="login-box">
+  <h2>Admin Login</h2>
+  <input type="password" id="password" placeholder="Enter password">
+  <div>
+    <input type="checkbox" id="showPass"> <label for="showPass" class="show-password">Show Password</label>
+  </div>
+  <button onclick="checkPassword()">Login</button>
+  <p id="error" style="color:red;margin-top:10px;"></p>
+</div>
+
+<script>
+document.getElementById('showPass').addEventListener('change', function(){
+  const passInput = document.getElementById('password');
+  passInput.type = this.checked ? 'text' : 'password';
+});
+
+function checkPassword(){
+  const pass = document.getElementById('password').value;
+  if(pass === "barangay123"){
+    window.location.href = "admin.html"; // go to admin page
+  } else {
+    document.getElementById('error').innerText = "Wrong password! Try again.";
+  }
+}
+</script>
+
 </body>
 </html>
