@@ -5,25 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Barangay Info</title>
 <style>
-  body { font-family: Arial, sans-serif; background:#f0f4f7; margin:0; padding:20px; color:#333; }
-  header { text-align:center; padding:25px; background:linear-gradient(90deg,#2E8B57,#3CB371); color:white; border-radius:12px; box-shadow:0 4px 8px rgba(0,0,0,0.1); margin-bottom:25px;}
-  header h1 { margin:0; } header p { margin:5px 0 0 0; }
-  .button-container { display:flex; flex-wrap:wrap; justify-content:center; gap:15px; margin-bottom:25px; }
-  .btn { background-color:#2E8B57; color:white; border:none; padding:15px 25px; border-radius:10px; font-size:1em; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.2); transition:.3s; }
-  .btn:hover { background-color:#3CB371; }
-  .section { display:none; background:white; padding:20px; margin-bottom:20px; border-radius:12px; box-shadow:0 3px 6px rgba(0,0,0,0.1); position:relative;}
-  h2 { color:#2E8B57; margin-top:0; border-bottom:2px solid #2E8B57; padding-bottom:5px; }
-  ul { padding-left:25px; line-height:1.6; }
-  .close-btn { position:absolute; top:15px; right:15px; background-color:#c0392b; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-size:.9em; transition:.3s; }
-  .close-btn:hover { background-color:#e74c3c; }
-  footer { text-align:center; margin-top:30px; font-size:.9em; color:#555; }
+body { font-family: Arial, sans-serif; background:#f0f4f7; margin:0; padding:20px; color:#333; }
+header { text-align:center; padding:25px; background:linear-gradient(90deg,#2E8B57,#3CB371); color:white; border-radius:12px; box-shadow:0 4px 8px rgba(0,0,0,0.1); margin-bottom:25px;}
+header h1 { margin:0; } header p { margin:5px 0 0 0; }
+.button-container { display:flex; flex-wrap:wrap; justify-content:center; gap:15px; margin-bottom:25px; }
+.btn { background-color:#2E8B57; color:white; border:none; padding:15px 25px; border-radius:10px; font-size:1em; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.2); transition:.3s; }
+.btn:hover { background-color:#3CB371; }
+.section { display:none; background:white; padding:20px; margin-bottom:20px; border-radius:12px; box-shadow:0 3px 6px rgba(0,0,0,0.1); position:relative;}
+h2 { color:#2E8B57; margin-top:0; border-bottom:2px solid #2E8B57; padding-bottom:5px; }
+ul { padding-left:25px; line-height:1.6; }
+.close-btn { position:absolute; top:15px; right:15px; background-color:#c0392b; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-size:.9em; transition:.3s; }
+.close-btn:hover { background-color:#e74c3c; }
+.save-btn { background:#2980b9; color:white; border:none; padding:10px 15px; border-radius:8px; cursor:pointer; margin-top:10px; }
+.save-btn:hover { background:#3498db; }
+[contenteditable="true"] { background:#f9f9f9; padding:5px; border-radius:5px; min-height:18px; }
+footer { text-align:center; margin-top:30px; font-size:.9em; color:#555; }
 </style>
 </head>
 <body>
 
 <header>
   <h1>Barangay Info System</h1>
-  <p>Click a button to view details</p>
+  <p>Click a button to view & edit details</p>
 </header>
 
 <div class="button-container" id="buttons"></div>
@@ -32,20 +35,22 @@
 <footer>&copy; 2026 Barangay Info System</footer>
 
 <script>
+let globalData = {};
+
+// Load JSON file
 async function loadData() {
-  const response = await fetch('data.json'); // Load JSON
+  const response = await fetch('data.json'); // JSON file in same repo
   const data = await response.json();
+  globalData = data;
 
   const buttonsDiv = document.getElementById('buttons');
   const sectionsDiv = document.getElementById('sections-container');
-
-  // Clear containers
   buttonsDiv.innerHTML = '';
   sectionsDiv.innerHTML = '';
 
-  // For each section in JSON
   for (const key in data) {
-    let title = key.replace(/_/g,' ').replace(/\b\w/g,l => l.toUpperCase()); // e.g. office_hours → Office Hours
+    let title = key.replace(/_/g,' ').replace(/\b\w/g,l => l.toUpperCase());
+
     // Create button
     const btn = document.createElement('button');
     btn.className = 'btn';
@@ -65,47 +70,87 @@ async function loadData() {
     closeBtn.onclick = closeSection;
     sec.appendChild(closeBtn);
 
-    // Section content
     const h2 = document.createElement('h2');
     h2.innerText = title;
     sec.appendChild(h2);
 
-    // Add content
+    // Editable content
     const content = data[key];
-    if(Array.isArray(content)) {
+    if(Array.isArray(content)){
       const ul = document.createElement('ul');
-      content.forEach(item => {
+      content.forEach((item,i)=>{
         const li = document.createElement('li');
+        li.contentEditable = true;
         li.innerText = item;
+        li.dataset.arrayKey = key;
+        li.dataset.index = i;
         ul.appendChild(li);
       });
       sec.appendChild(ul);
-    } else if(typeof content === 'object') {
+    } else if(typeof content === 'object'){
       for(const sub in content){
         const p = document.createElement('p');
+        p.contentEditable = true;
         p.innerText = `${sub.charAt(0).toUpperCase() + sub.slice(1)}: ${content[sub]}`;
+        p.dataset.objKey = key;
+        p.dataset.subKey = sub;
         sec.appendChild(p);
       }
     } else {
       const p = document.createElement('p');
+      p.contentEditable = true;
       p.innerText = content;
+      p.dataset.key = key;
       sec.appendChild(p);
     }
+
+    // Save button
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'save-btn';
+    saveBtn.innerText = 'Download Updated JSON';
+    saveBtn.onclick = saveData;
+    sec.appendChild(saveBtn);
 
     sectionsDiv.appendChild(sec);
   }
 }
 
+// Show section
 function showSection(id){
-  document.getElementById('buttons').style.display = 'none';
-  document.querySelectorAll('.section').forEach(sec => sec.style.display='none');
-  document.getElementById(id).style.display = 'block';
+  document.getElementById('buttons').style.display='none';
+  document.querySelectorAll('.section').forEach(sec=>sec.style.display='none');
+  document.getElementById(id).style.display='block';
 }
 
+// Close section
 function closeSection(){
-  document.querySelectorAll('.section').forEach(sec => sec.style.display='none');
-  document.getElementById('buttons').style.display = 'flex';
+  document.querySelectorAll('.section').forEach(sec=>sec.style.display='none');
+  document.getElementById('buttons').style.display='flex';
   window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Save editable data to new JSON
+function saveData(){
+  document.querySelectorAll('[contenteditable="true"]').forEach(el=>{
+    if(el.dataset.arrayKey){
+      globalData[el.dataset.arrayKey][el.dataset.index] = el.innerText;
+    } else if(el.dataset.objKey){
+      const parts = el.innerText.split(':');
+      if(parts.length>1){
+        globalData[el.dataset.objKey][el.dataset.subKey] = parts.slice(1).join(':').trim();
+      }
+    } else if(el.dataset.key){
+      globalData[el.dataset.key] = el.innerText;
+    }
+  });
+
+  const blob = new Blob([JSON.stringify(globalData,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'data.json';
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 loadData();
